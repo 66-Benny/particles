@@ -32,6 +32,10 @@
         var points = new Array(args.num);
         var myCanvas_width;
         var length = points.length;
+        var mouse_point = {
+            x: -1,
+            y: -1
+        };
         //生成粒子的随机坐标
         for (let i = 0; i < length; i++) {
             points[i] = {
@@ -76,6 +80,27 @@
                 cxt.lineWidth = args.lineWidth;
             }
         }
+        //鼠标事件
+        function canvasMouseMove(e) {
+            var position = myCanvas.getBoundingClientRect();
+            var pos = {
+                x: e.clientX - position.left * (myCanvas.width / position.width),
+                y: e.clientY - position.top * (myCanvas.height / position.height)
+            }
+            mouse_point = {
+                x: pos.x,
+                y: pos.y
+            };
+        }
+
+        function canvasMouseOut() {
+            mouse_point = {
+                x: -1,
+                y: -1
+            };
+        }
+        myCanvas.addEventListener('mousemove', canvasMouseMove, false);
+        myCanvas.addEventListener('mouseout', canvasMouseOut, false)
         //显示粒子的运动轨迹
         function show() {
             points.sort((a, b) =>
@@ -100,6 +125,12 @@
                     if (p1.x + d_connect < p2.x) {
                         break; // 减少计算量
                     }
+                }
+            }
+            // 画出粒子与鼠标当前位置的连接线
+            if (mouse_point.x >= 0) {
+                for (let i = 0; i < length; i++) {
+                    theLineOfTwoPoints(mouse_point, points[i], cxt, d_connect);
                 }
             }
             pointMove(points)
