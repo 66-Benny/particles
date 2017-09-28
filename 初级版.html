@@ -1,0 +1,79 @@
+<html>
+
+<head>
+    <link rel="Shortcut Icon" href="http://ico.ooopic.com/ajax/iconpng/?id=98312.png">
+    <style type="text/css">
+        #mod {
+            width: 100%;
+            height: 300px;
+            background-color: lightgrey;
+        }
+
+        #qq {
+            position: absolute;
+            border: 4px red solid;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="mod">
+        <div id="qq"></div>
+    </div>
+    <script language="javascript">
+        var QiuX = 100;
+        QiuY = 0;
+        directX = 1;
+        directY = 1;
+        var reg = /^[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/;
+        var XS
+        var mod = document.getElementById('mod');
+
+        var throttle = function (fn, delay) {
+            var timer = null;
+            return function () {
+                var context = this,
+                    args = arguments;
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                    fn.apply(context, args);
+                }, delay);
+            };
+        };
+
+        function get() {
+            if (mod.currentStyle) {
+                return mod.currentStyle.width; //ie下先获取样式
+            } else {
+                return getComputedStyle(mod, false).width; //FF下获取样式
+            }
+        }
+        get()
+
+        window.addEventListener("resize", throttle(function () {
+            XS = reg.exec(get())[0];
+            console.log(XS)
+        }, 100));
+
+        function tantan() {
+            QiuX += directX;
+            QiuY += directY;
+            qq.style.left = QiuX + "px";
+            qq.style.top = QiuY + "px";
+            if (QiuX + qq.offsetWidth >= XS || QiuX < 0) {
+                directX = -directX;
+            }
+            if (QiuY + qq.offsetHeight >= 300 || QiuY < 0) {
+                directY = -directY;
+            }
+        }
+        setInterval("tantan()", 15);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+<html>
+
+<head>
+    <link rel="Shortcut Icon" href="http://ico.ooopic.com/ajax/iconpng/?id=98312.png">
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #myCanvas {
+            width: 100%;
+            height: 100%;
+            background-color: #f6f5ec;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="myCanvas"></canvas>
+    <script language="javascript">
+        var args = {
+            num: 60,
+            color: '#ea66a6',
+            speed: 0.3,
+            dist: 0.12,
+            scrilWidth: 3,
+            lineWidth: 1
+        }
+        var reg = /^[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/;
+        var myCanvas = document.getElementById('myCanvas');
+        var points = new Array(args.num);
+        var myCanvas_width;
+        var length = points.length;
+        //生成粒子的随机坐标
+        for (let i = 0; i < length; i++) {
+            points[i] = {
+                x: Math.floor(Math.random() * myCanvas.width),
+                y: Math.floor(Math.random() * myCanvas.height),
+                move: Math.random() * 2 * Math.PI
+            };
+        }
+        // 处理窗口缩放
+        function resizeCanvas() {
+            for (let i = 0; i < points.length; i++) {
+                var p = points[i];
+                p.x = (p.x / myCanvas.width) * document.body.clientWidth;
+                p.y = (p.y / myCanvas.height) * document.body.clientHeight;
+            }
+            myCanvas.width = document.body.clientWidth;
+            myCanvas.height = document.body.clientHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas, false);
+        //粒子运动
+        function pointMove(ps) {
+            for (let i = 0; i < ps.length; i++) {
+                var p = ps[i];
+                p.x += args.speed * Math.sin(p.move);
+                p.y += args.speed * Math.cos(p.move);
+                if (p.x < 0 || p.x > myCanvas.width) {
+                    p.move = 2 * Math.PI - p.move;
+                } else if (p.y > myCanvas.height || p.y < 0) {
+                    p.move = Math.PI - p.move;
+                }
+            }
+        }
+        //粒子间的连接线
+        function theLineOfTwoPoints(p1, p2, cxt, d_connect) {
+            var d = Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+            cxt.globalAlpha = (d_connect - d) / d_connect;
+            if (d < d_connect) {
+                cxt.moveTo(p1.x, p1.y);
+                cxt.lineTo(p2.x, p2.y);
+                cxt.stroke();
+                cxt.lineWidth = args.lineWidth;
+            }
+        }
+        //显示粒子的运动轨迹
+        function show() {
+            points.sort((a, b) =>
+                a.x - b.x
+            );
+            // 画出每一个粒子点
+            var cxt = myCanvas.getContext('2d');
+            cxt.fillStyle = args.color;
+            cxt.clearRect(0, 0, myCanvas.width, myCanvas.height);
+            cxt.strokeStyle = args.color;
+            var d_connect = Math.max(myCanvas.width, myCanvas.height) * args.dist;
+            for (let i = 0; i < length; i++) {
+                var p1 = points[i];
+                cxt.globalAlpha = 1;
+                cxt.beginPath();
+                cxt.arc(p1.x, p1.y, args.scrilWidth, 0, Math.PI * 2, true);
+                cxt.closePath();
+                cxt.fill();
+                for (let j = i + 1; j < length; j++) {
+                    var p2 = points[j];
+                    theLineOfTwoPoints(p1, p2, cxt, d_connect);
+                    if (p1.x + d_connect < p2.x) {
+                        break; // 减少计算量
+                    }
+                }
+            }
+            pointMove(points)
+        }
+        show()
+        setInterval(show, 1000 / 60)
+    </script>
+</body>
+
+</html>
