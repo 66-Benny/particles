@@ -1,14 +1,13 @@
 <html>
 
 <head>
-    <link rel="Shortcut Icon" href="http://ico.ooopic.com/ajax/iconpng/?id=98312.png">
     <style type="text/css">
         * {
             margin: 0;
             padding: 0;
         }
 
-        #myCanvas {
+        #particlesCanvas {
             width: 100%;
             height: 100%;
             background-color: #f6f5ec;
@@ -17,9 +16,9 @@
 </head>
 
 <body>
-    <canvas id="myCanvas"></canvas>
+    <canvas id="particlesCanvas"></canvas>
     <script language="javascript">
-        var args = {
+        var particlesArgs = {
             num: 60,
             color: '#ea66a6',
             speed: 0.3,
@@ -28,9 +27,9 @@
             lineWidth: 1
         }
         var reg = /^[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/;
-        var myCanvas = document.getElementById('myCanvas');
-        var points = new Array(args.num);
-        var myCanvas_width;
+        var particlesCanvas = document.getElementById('particlesCanvas');
+        var points = new Array(particlesArgs.num);
+        var particlesCanvas_width;
         var length = points.length;
         var mouse_point = {
             x: -1,
@@ -39,8 +38,8 @@
         //生成粒子的随机坐标
         for (let i = 0; i < length; i++) {
             points[i] = {
-                x: Math.floor(Math.random() * myCanvas.width),
-                y: Math.floor(Math.random() * myCanvas.height),
+                x: Math.floor(Math.random() * particlesCanvas.width),
+                y: Math.floor(Math.random() * particlesCanvas.height),
                 move: Math.random() * 2 * Math.PI
             };
         }
@@ -48,11 +47,11 @@
         function resizeCanvas() {
             for (let i = 0; i < points.length; i++) {
                 var p = points[i];
-                p.x = (p.x / myCanvas.width) * document.body.clientWidth;
-                p.y = (p.y / myCanvas.height) * document.body.clientHeight;
+                p.x = (p.x / particlesCanvas.width) * document.body.clientWidth;
+                p.y = (p.y / particlesCanvas.height) * document.body.clientHeight;
             }
-            myCanvas.width = document.body.clientWidth;
-            myCanvas.height = document.body.clientHeight;
+            particlesCanvas.width = document.body.clientWidth;
+            particlesCanvas.height = document.body.clientHeight;
         }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas, false);
@@ -60,11 +59,11 @@
         function pointMove(ps) {
             for (let i = 0; i < ps.length; i++) {
                 var p = ps[i];
-                p.x += args.speed * Math.sin(p.move);
-                p.y += args.speed * Math.cos(p.move);
-                if (p.x < 0 || p.x > myCanvas.width) {
+                p.x += particlesArgs.speed * Math.sin(p.move);
+                p.y += particlesArgs.speed * Math.cos(p.move);
+                if (p.x < 0 || p.x > particlesCanvas.width) {
                     p.move = 2 * Math.PI - p.move;
-                } else if (p.y > myCanvas.height || p.y < 0) {
+                } else if (p.y > particlesCanvas.height || p.y < 0) {
                     p.move = Math.PI - p.move;
                 }
             }
@@ -77,12 +76,12 @@
                 cxt.moveTo(p1.x, p1.y);
                 cxt.lineTo(p2.x, p2.y);
                 cxt.stroke();
-                cxt.lineWidth = args.lineWidth;
+                cxt.lineWidth = particlesArgs.lineWidth;
             }
         }
         //鼠标事件
         function canvasMouseMove(e) {
-            var position = myCanvas.getBoundingClientRect();
+            var position = particlesCanvas.getBoundingClientRect();
             var pos = {
                 x: e.clientX,
                 y: e.clientY
@@ -99,24 +98,24 @@
                 y: -1
             };
         }
-        myCanvas.addEventListener('mousemove', canvasMouseMove, false);
-        myCanvas.addEventListener('mouseout', canvasMouseOut, false)
+        particlesCanvas.addEventListener('mousemove', canvasMouseMove, false);
+        particlesCanvas.addEventListener('mouseout', canvasMouseOut, false)
         //显示粒子的运动轨迹
         function show() {
             points.sort((a, b) =>
                 a.x - b.x
             );
             // 画出每一个粒子点
-            var cxt = myCanvas.getContext('2d');
-            cxt.fillStyle = args.color;
-            cxt.clearRect(0, 0, myCanvas.width, myCanvas.height);
-            cxt.strokeStyle = args.color;
-            var d_connect = Math.max(myCanvas.width, myCanvas.height) * args.dist;
+            var cxt = particlesCanvas.getContext('2d');
+            cxt.fillStyle = particlesArgs.color;
+            cxt.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+            cxt.strokeStyle = particlesArgs.color;
+            var d_connect = Math.max(particlesCanvas.width, particlesCanvas.height) * particlesArgs.dist;
             for (let i = 0; i < length; i++) {
                 var p1 = points[i];
                 cxt.globalAlpha = 1;
                 cxt.beginPath();
-                cxt.arc(p1.x, p1.y, args.scrilWidth, 0, Math.PI * 2, true);
+                cxt.arc(p1.x, p1.y, particlesArgs.scrilWidth, 0, Math.PI * 2, true);
                 cxt.closePath();
                 cxt.fill();
                 for (let j = i + 1; j < length; j++) {

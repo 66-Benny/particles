@@ -1,7 +1,6 @@
 <html>
 
 <head>
-    <link rel="Shortcut Icon" href="http://ico.ooopic.com/ajax/iconpng/?id=98312.png">
     <style type="text/css">
         #mod {
             width: 100%;
@@ -38,10 +37,10 @@
             var timer = null;
             return function () {
                 var context = this,
-                    args = arguments;
+                    particlesArgs = arguments;
                 clearTimeout(timer);
                 timer = setTimeout(function () {
-                    fn.apply(context, args);
+                    fn.apply(context, particlesArgs);
                 }, delay);
             };
         };

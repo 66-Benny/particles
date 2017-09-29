@@ -9,6 +9,8 @@
 
 [高级鼠标事件版](https://66-benny.github.io/particles/高级鼠标事件版.html)
 
+[最终优化版](https://66-benny.github.io/particles/最终优化版.html)
+
 ## particles 的分步实现
 ### 从初级版到中级版，再到最后的高级版，我将一步步展示 particles 的实现效果。
 
@@ -16,23 +18,23 @@
 
 #### **2. 了解了基本的实现原理后，我们可以接着实现多坐标的版本了([初级多坐标版](https://66-benny.github.io/particles/初级多坐标版.html))**, 首先我们得有个画布，那么 HTML5 的 Canvas 就是很好选择，就像下面这样，一行代码就生成了一个画布
 ```
- <canvas id="myCanvas"></canvas>
+ <canvas id="particlesCanvas"></canvas>
 ```
 
 #### 多坐标的原理就是先随机生成若干个粒子
 ```
 //粒子的相关属性数值
-var args = {
+var particlesArgs = {
     num: 50,
     color: 'red'
 }
-var myCanvas = document.getElementById('myCanvas');
-var points = new Array(args.num);
+var particlesCanvas = document.getElementById('particlesCanvas');
+var points = new Array(particlesArgs.num);
 //生成粒子的随机坐标
 for (let i = 0; i < points.length; i++) {
     points[i] = {
-        x: Math.floor(Math.random() * myCanvas.width),
-        y: Math.floor(Math.random() * myCanvas.height)
+        x: Math.floor(Math.random() * particlesCanvas.width),
+        y: Math.floor(Math.random() * particlesCanvas.height)
     };
 }
 ```
@@ -43,14 +45,14 @@ function show() {
         a.x - b.x
     );
     // 画出每一个粒子点
-    var cxt = myCanvas.getContext('2d');
-    cxt.fillStyle = args.color;
-    cxt.clearRect(0, 0, myCanvas.width, myCanvas.height);
-    cxt.strokeStyle = args.color;
+    var cxt = particlesCanvas.getContext('2d');
+    cxt.fillStyle = particlesArgs.color;
+    cxt.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+    cxt.strokeStyle = particlesArgs.color;
     for (let i = 0; i < points.length; i++) {
         var p1 = points[i];
         cxt.beginPath();
-        cxt.arc(p1.x, p1.y, args.scrilWidth, 0, Math.PI * 2, true);
+        cxt.arc(p1.x, p1.y, particlesArgs.scrilWidth, 0, Math.PI * 2, true);
         cxt.closePath();
         cxt.fill();
     }
@@ -64,11 +66,11 @@ setInterval(show, 1000 / 60)
 function resizeCanvas() {
     for (let i = 0; i < points.length; i++) {
         var p = points[i];
-        p.x = (p.x / myCanvas.width) * document.body.clientWidth;
-        p.y = (p.y / myCanvas.height) * document.body.clientHeight;
+        p.x = (p.x / particlesCanvas.width) * document.body.clientWidth;
+        p.y = (p.y / particlesCanvas.height) * document.body.clientHeight;
     }
-    myCanvas.width = document.body.clientWidth;
-    myCanvas.height = document.body.clientHeight;
+    particlesCanvas.width = document.body.clientWidth;
+    particlesCanvas.height = document.body.clientHeight;
 }
 resizeCanvas();
 window.addEventListener('resize', resizeCanvas, false);
@@ -81,14 +83,14 @@ window.addEventListener('resize', resizeCanvas, false);
 function pointMove(ps) {
     for (let i = 0; i < ps.length; i++) {
         var p = ps[i];
-        p.x += args.speed * Math.sin(p.move);
-        p.y += args.speed * Math.cos(p.move);
+        p.x += particlesArgs.speed * Math.sin(p.move);
+        p.y += particlesArgs.speed * Math.cos(p.move);
         //如果粒子触碰到边界，
         X 轴方向朝着 （2π - 起始角）方向运行，
         Y 轴方向朝着起始位置的负方向运行
-        if (p.x < 0 || p.x > myCanvas.width) {
+        if (p.x < 0 || p.x > particlesCanvas.width) {
             p.move = 2 * Math.PI - p.move;
-        } else if (p.y > myCanvas.height || p.y < 0) {
+        } else if (p.y > particlesCanvas.height || p.y < 0) {
             p.move = Math.PI - p.move;
         }
     }
@@ -110,7 +112,7 @@ function pointMove(ps) {
          cxt.moveTo(p1.x, p1.y);
          cxt.lineTo(p2.x, p2.y);
          cxt.stroke();
-         cxt.lineWidth = args.lineWidth;
+         cxt.lineWidth = particlesArgs.lineWidth;
      }
  }
  ```
@@ -118,17 +120,17 @@ function pointMove(ps) {
  ```
  function show() {
     // 画出每一个粒子点
-    var cxt = myCanvas.getContext('2d');
-    cxt.fillStyle = args.color;
-    cxt.clearRect(0, 0, myCanvas.width, myCanvas.height);
-    cxt.strokeStyle = args.color;
-    var d_connect = Math.max(myCanvas.width, myCanvas.height) * args.dist;
+    var cxt = particlesCanvas.getContext('2d');
+    cxt.fillStyle = particlesArgs.color;
+    cxt.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+    cxt.strokeStyle = particlesArgs.color;
+    var d_connect = Math.max(particlesCanvas.width, particlesCanvas.height) * particlesArgs.dist;
     for (let i = 0; i < length; i++) {
         //debugger
         var p1 = points[i];
         cxt.globalAlpha = 1;
         cxt.beginPath();
-        cxt.arc(p1.x, p1.y, args.scrilWidth, 0, Math.PI * 2, true);
+        cxt.arc(p1.x, p1.y, particlesArgs.scrilWidth, 0, Math.PI * 2, true);
         cxt.closePath();
         cxt.fill();
         //找出所有满足条件可以与自身相连的粒子，连线
@@ -146,7 +148,7 @@ setInterval(show, 1000 / 60)
  ```
 //鼠标事件
 function canvasMouseMove(e) {
-    var position = myCanvas.getBoundingClientRect();
+    var position = particlesCanvas.getBoundingClientRect();
     var pos = {
         x: e.clientX,
         y: e.clientY
@@ -163,10 +165,10 @@ function canvasMouseOut() {
         y: -1
     };
 }
-myCanvas.addEventListener('mousemove', canvasMouseMove, false);
-myCanvas.addEventListener('mouseout', canvasMouseOut, false)
+particlesCanvas.addEventListener('mousemove', canvasMouseMove, false);
+particlesCanvas.addEventListener('mouseout', canvasMouseOut, false)
 ```
-
+---
 #### 上文有两处可以进行优化的点，在这将分别说明下。
 > 【优化1】使用 requestAnimationFrame 代替 setInterval
 > - 动画更加流畅，经由浏览器优化
@@ -181,12 +183,15 @@ var throttle = function (fn, delay) {
     var timer = null;
     return function () {
         var context = this,
-            args = arguments;
+            particlesArgs = arguments;
         clearTimeout(timer);
         timer = setTimeout(function () {
-            fn.apply(context, args);
+            fn.apply(context, particlesArgs);
         }, delay);
     };
 };
 window.addEventListener('resize', throttle(resizeCanvas, 100), false);
 ```
+#### 最终优化版可以点击[这里](https://66-benny.github.io/particles/最终优化版.html)查看
+
+写于 2017年09月29日，晚间
