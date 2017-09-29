@@ -32,6 +32,8 @@
         var points = new Array(args.num);
         var myCanvas_width;
         var length = points.length;
+        var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+            window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
         var mouse_point = {
             x: -1,
             y: -1
@@ -44,6 +46,17 @@
                 move: Math.random() * 2 * Math.PI
             };
         }
+        var throttle = function (fn, delay) {
+            var timer = null;
+            return function () {
+                var context = this,
+                    args = arguments;
+                clearTimeout(timer);
+                timer = setTimeout(function () {
+                    fn.apply(context, args);
+                }, delay);
+            };
+        };
         // 处理窗口缩放
         function resizeCanvas() {
             for (let i = 0; i < points.length; i++) {
@@ -55,7 +68,7 @@
             myCanvas.height = document.body.clientHeight;
         }
         resizeCanvas();
-        window.addEventListener('resize', resizeCanvas, false);
+        window.addEventListener('resize', throttle(resizeCanvas, 100), false);
         //粒子运动
         function pointMove(ps) {
             for (let i = 0; i < ps.length; i++) {
@@ -134,9 +147,9 @@
                 }
             }
             pointMove(points)
+            requestAnimationFrame(show)
         }
-        show()
-        setInterval(show, 1000 / 60)
+        show();
     </script>
 </body>
 

@@ -142,3 +142,51 @@ function pointMove(ps) {
 show()
 setInterval(show, 1000 / 60)
  ```
+ #### 5. **最后将是([高级鼠标事件版](https://66-benny.github.io/particles/高级鼠标事件版.html))**，思路就是将鼠标看作是一个粒子，根据 getBoundingClientRect() 计算出鼠标的 X 坐标和 Y 坐标。最后鼠标将会与其指定范围内的其他粒子相连。
+ ```
+//鼠标事件
+function canvasMouseMove(e) {
+    var position = myCanvas.getBoundingClientRect();
+    var pos = {
+        x: e.clientX,
+        y: e.clientY
+    }
+    mouse_point = {
+        x: pos.x,
+        y: pos.y
+    };
+}
+
+function canvasMouseOut() {
+    mouse_point = {
+        x: -1,
+        y: -1
+    };
+}
+myCanvas.addEventListener('mousemove', canvasMouseMove, false);
+myCanvas.addEventListener('mouseout', canvasMouseOut, false)
+```
+
+#### 上文有两处可以进行优化的点，在这将分别说明下。
+> 【优化1】使用 requestAnimationFrame 代替 setInterval
+> - 动画更加流畅，经由浏览器优化
+> - 窗口未激活时，动画暂停，有效节省CPU开销
+> - 省电，对移动端很友好
+> - 动画保持 60fps（每一帧 16 ms），浏览器内部决定渲染的最佳时机
+
+> 【优化2】在浏览器 resize 时候可以使用节流函数 Throttle
+
+```
+var throttle = function (fn, delay) {
+    var timer = null;
+    return function () {
+        var context = this,
+            args = arguments;
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+            fn.apply(context, args);
+        }, delay);
+    };
+};
+window.addEventListener('resize', throttle(resizeCanvas, 100), false);
+```
