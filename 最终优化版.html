@@ -115,9 +115,6 @@
         particlesCanvas.addEventListener('mouseout', canvasMouseOut, false)
         //显示粒子的运动轨迹
         function show() {
-            points.sort((a, b) =>
-                a.x - b.x
-            );
             // 画出每一个粒子点
             var cxt = particlesCanvas.getContext('2d');
             cxt.fillStyle = particlesArgs.color;
@@ -134,9 +131,6 @@
                 for (let j = i + 1; j < length; j++) {
                     var p2 = points[j];
                     theLineOfTwoPoints(p1, p2, cxt, d_connect);
-                    if (p1.x + d_connect < p2.x) {
-                        break; // 减少计算量
-                    }
                 }
             }
             // 画出粒子与鼠标当前位置的连接线
