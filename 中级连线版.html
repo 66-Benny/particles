@@ -77,9 +77,6 @@
         }
         //显示粒子的运动轨迹
         function show() {
-            points.sort((a, b) =>
-                a.x - b.x
-            );
             // 画出每一个粒子点
             var cxt = myCanvas.getContext('2d');
             cxt.fillStyle = args.color;
@@ -87,6 +84,7 @@
             cxt.strokeStyle = args.color;
             var d_connect = Math.max(myCanvas.width, myCanvas.height) * args.dist;
             for (let i = 0; i < length; i++) {
+                //debugger
                 var p1 = points[i];
                 cxt.globalAlpha = 1;
                 cxt.beginPath();
@@ -96,9 +94,6 @@
                 for (let j = i + 1; j < length; j++) {
                     var p2 = points[j];
                     theLineOfTwoPoints(p1, p2, cxt, d_connect);
-                    if (p1.x + d_connect < p2.x) {
-                        break; // 减少计算量
-                    }
                 }
             }
             pointMove(points)
