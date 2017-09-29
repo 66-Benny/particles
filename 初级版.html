@@ -28,8 +28,8 @@
     <script language="javascript">
         var QiuX = 100;
         QiuY = 0;
-        directX = 1;
-        directY = 1;
+        directX = Math.PI;
+        directY = Math.PI;
         var reg = /^[1-9]\d*\.\d*|0\.\d*[1-9]\d*$/;
         var XS
         var mod = document.getElementById('mod');
@@ -59,6 +59,10 @@
             XS = reg.exec(get())[0];
             console.log(XS)
         }, 100));
+        window.addEventListener("load", function () {
+            XS = reg.exec(get())[0];
+            console.log(XS)
+        });
 
         function tantan() {
             QiuX += directX;
@@ -72,7 +76,7 @@
                 directY = -directY;
             }
         }
-        setInterval("tantan()", 15);
+        setInterval("tantan()", 1000 / 60);
     </script>
 </body>
 

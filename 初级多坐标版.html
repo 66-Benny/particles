@@ -61,7 +61,6 @@
             cxt.strokeStyle = args.color;
             for (let i = 0; i < points.length; i++) {
                 var p1 = points[i];
-                cxt.globalAlpha = 1;
                 cxt.beginPath();
                 cxt.arc(p1.x, p1.y, args.scrilWidth, 0, Math.PI * 2, true);
                 cxt.closePath();
